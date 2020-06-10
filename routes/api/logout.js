@@ -57,22 +57,45 @@ router.post("/", authenticateToken, (req, res) => {
 
 function authenticateToken(req, res, next) {
   const authHeader = req.headers["authorization"];
-  // console.log("HEYYYYYYYYYY");
-  
-  // console.log("body:",req.body);
-  
-  const token = authHeader && authHeader.split(' ')[1];
-  console.log("token:",token);
-  
+  const token = authHeader && authHeader.split(" ")[1];
+  console.log(`token check: ${token}`);
+
+  let sqlSelectState = "SELECT * FROM userstate WHERE token = ?";
+
   if (token == null) {
-    return res.sendStatus(401);
+    return res.status(401);
   }
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, result) => {
-      if (err) {
-        return res.sendStatus(403);
-      }
+
+  let querySelectState = db.query(sqlSelectState, token, (err, stateEntry) => {
+    if (err) {
+      throw err;
+    }
+    // console.log("hi");
+    console.log(`length:`, stateEntry[0]);
+    console.log(`lengthTokrn:`, token);
+    console.log("db:",stateEntry[0]);
+    
+
+    if (stateEntry[0] === undefined) {
+      return res.status(404).json({
+        msg: `Invalid Request! Unauthenticated User!`,
+      });
+    }
+    // console.log("hi");
+
+    try {
+      let result = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
       req.result = result;
+      // console.log(req.body);
+
+      // console.log("result");
+
       next();
+    } catch (err) {
+      console.log(err);
+      return res.status(403);
+    }
+
   });
 }
 module.exports = router;
