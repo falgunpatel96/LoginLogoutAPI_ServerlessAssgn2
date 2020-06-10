@@ -56,12 +56,14 @@ router.post("/", authenticateToken, (req, res) => {
 });
 
 function authenticateToken(req, res, next) {
-  const authHeader = req.body.token;
-  console.log("HEYYYYYYYYYY");
+  const authHeader = req.headers["authorization"];
+  // console.log("HEYYYYYYYYYY");
   
-  console.log(req.body);
+  // console.log("body:",req.body);
   
   const token = authHeader && authHeader.split(' ')[1];
+  console.log("token:",token);
+  
   if (token == null) {
     return res.sendStatus(401);
   }
