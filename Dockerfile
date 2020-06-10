@@ -3,7 +3,7 @@ WORKDIR /app
 COPY package.json /app
 RUN npm install
 COPY . /app
-EXPORT PORT=7000
+ENV PORT=7000
 EXPORT ACCESS_TOKEN_SECRET=7da3fb9cf6f299711e8e88bd3d9401cb88db3509fedb01cc7369e9bfd7c631b3e4e7cc3e10a1ebbbcfe4390b4f2dd0709076ef636be0f5b9e05ebb1d9163f7aa
 EXPOSE 7000
 CMD node index.js
